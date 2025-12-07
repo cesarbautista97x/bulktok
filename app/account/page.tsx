@@ -25,6 +25,8 @@ function AccountPageContent() {
     const [isCreatingProfile, setIsCreatingProfile] = useState(false)
     const [localProfile, setLocalProfile] = useState<any>(null)
     const [profileLoading, setProfileLoading] = useState(true)
+    const [subscriptionStatus, setSubscriptionStatus] = useState<any>(null)
+    const [isCanceling, setIsCanceling] = useState(false)
 
     // Load profile directly from database
     useEffect(() => {
@@ -56,6 +58,30 @@ function AccountPageContent() {
 
         loadProfile()
     }, [user])
+
+    // Load subscription status
+    useEffect(() => {
+        const loadSubscriptionStatus = async () => {
+            if (!user || !localProfile) return
+
+            try {
+                const response = await fetch('/api/stripe/subscription-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: user.id }),
+                })
+
+                if (response.ok) {
+                    const data = await response.json()
+                    setSubscriptionStatus(data)
+                }
+            } catch (error) {
+                console.error('Error loading subscription status:', error)
+            }
+        }
+
+        loadSubscriptionStatus()
+    }, [user, localProfile])
 
     // Use local profile instead of AuthProvider profile
     const profile = localProfile
@@ -126,6 +152,46 @@ function AccountPageContent() {
         } catch (error: any) {
             console.error('Upgrade error:', error)
             toast.error(error.message || 'Failed to start checkout')
+        }
+    }
+
+    const handleCancelSubscription = async () => {
+        if (!confirm('Are you sure you want to cancel your subscription? You will retain access until the end of your billing period.')) {
+            return
+        }
+
+        setIsCanceling(true)
+        try {
+            const response = await fetch('/api/stripe/cancel-subscription', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: user?.id }),
+            })
+
+            if (!response.ok) {
+                const error = await response.json()
+                throw new Error(error.error || 'Failed to cancel subscription')
+            }
+
+            const data = await response.json()
+            toast.success(data.message)
+
+            // Reload subscription status
+            const statusResponse = await fetch('/api/stripe/subscription-status', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: user?.id }),
+            })
+
+            if (statusResponse.ok) {
+                const statusData = await statusResponse.json()
+                setSubscriptionStatus(statusData)
+            }
+        } catch (error: any) {
+            console.error('Cancel error:', error)
+            toast.error(error.message || 'Failed to cancel subscription')
+        } finally {
+            setIsCanceling(false)
         }
     }
 
@@ -270,6 +336,39 @@ function AccountPageContent() {
                         </div>
                     </div>
 
+                    {/* Subscription Status - Show for paid tiers */}
+                    {subscriptionStatus?.hasSubscription && (
+                        <div className="mb-4 p-4 bg-neutral-50 rounded-lg border border-neutral-200">
+                            <div className="flex items-center justify-between mb-2">
+                                <div>
+                                    <p className="text-sm font-medium text-neutral-700">Next Billing Date</p>
+                                    <p className="text-lg font-semibold text-neutral-900">
+                                        {new Date(subscriptionStatus.currentPeriodEnd).toLocaleDateString('en-US', {
+                                            month: 'long',
+                                            day: 'numeric',
+                                            year: 'numeric'
+                                        })}
+                                    </p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-sm font-medium text-neutral-700">Days Remaining</p>
+                                    <p className="text-lg font-semibold text-primary-600">
+                                        {subscriptionStatus.daysRemaining} days
+                                    </p>
+                                </div>
+                            </div>
+
+                            {subscriptionStatus.cancelAtPeriodEnd && (
+                                <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                    <p className="text-sm text-yellow-800">
+                                        ⚠️ Your subscription will be canceled on {new Date(subscriptionStatus.currentPeriodEnd).toLocaleDateString()}.
+                                        You'll retain access until then.
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
                     {displayProfile.subscription_tier === 'free' && (
                         <div className="space-y-4">
                             {/* Pro Tier */}
@@ -338,17 +437,30 @@ function AccountPageContent() {
                     )}
 
                     {displayProfile.subscription_tier === 'unlimited' && (
-                        <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                            <div className="flex items-center gap-2">
-                                <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                </svg>
-                                <p className="text-purple-800 font-medium">🚀 Unlimited subscription active</p>
+                        <div className="space-y-4">
+                            <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                                <div className="flex items-center gap-2">
+                                    <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    <span className="text-purple-800 font-medium">You're on the Unlimited plan!</span>
+                                </div>
+                                <p className="text-sm text-purple-700 mt-2">
+                                    Enjoy unlimited video generation with no restrictions.
+                                </p>
                             </div>
+                            {!subscriptionStatus?.cancelAtPeriodEnd && (
+                                <button
+                                    onClick={handleCancelSubscription}
+                                    disabled={isCanceling}
+                                    className="w-full px-4 py-2 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg border border-red-200 transition-colors disabled:opacity-50"
+                                >
+                                    {isCanceling ? 'Canceling...' : 'Cancel Subscription'}
+                                </button>
+                            )}
                         </div>
                     )}
                 </div>
-
 
                 {/* Account Info */}
                 <div className="bg-white rounded-xl shadow-sm border border-neutral-200 p-6">
