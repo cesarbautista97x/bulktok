@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BulkTok - Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+
+<body class="bg-neutral-50">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-neutral-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <div
+                        class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-lg">B</span>
+                    </div>
+                    <span class="text-xl font-bold gradient-text">BulkTok</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="min-h-screen pt-24 pb-12">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-neutral-900 mb-2">Generate Videos</h1>
+                <p class="text-neutral-600">Upload your images and audio. Generate videos automatically.</p>
+            </div>
+
+            <!-- Upload Images -->
+            <div class="bg-white rounded-xl shadow-sm border border-neutral-200 p-6 mb-6">
+                <h2 class="text-lg font-semibold text-neutral-900 mb-4">1. Upload Images</h2>
+                <input type="file" id="imageInput" accept="image/*" multiple
+                    class="w-full px-4 py-3 rounded-lg border border-neutral-200">
+                <div id="imagePreview" class="mt-4 text-sm text-neutral-600"></div>
+            </div>
+
+            <!-- Upload Audio -->
+            <div class="bg-white rounded-xl shadow-sm border border-neutral-200 p-6 mb-6">
+                <h2 class="text-lg font-semibold text-neutral-900 mb-4">2. Upload Audio Track</h2>
+                <input type="file" id="audioInput" accept="audio/*"
+                    class="w-full px-4 py-3 rounded-lg border border-neutral-200">
+                <div id="audioPreview" class="mt-4 text-sm text-neutral-600"></div>
+            </div>
+
+            <!-- Generate Button -->
+            <div class="flex justify-end mb-6">
+                <button id="generateBtn"
+                    class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-8 py-4 rounded-lg shadow-md hover:shadow-lg transition-all text-lg">
+                    Generate Videos
+                </button>
+            </div>
+
+            <!-- Status -->
+            <div id="status" class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-blue-900"></div>
+        </div>
+    </main>
+
+    <script>
+        console.log('Script loaded!');
+
+        const imageInput = document.getElementById('imageInput');
+        const audioInput = document.getElementById('audioInput');
+        const generateBtn = document.getElementById('generateBtn');
+        const imagePreview = document.getElementById('imagePreview');
+        const audioPreview = document.getElementById('audioPreview');
+        const status = document.getElementById('status');
+
+        // Update previews
+        imageInput.addEventListener('change', function () {
+            const count = this.files.length;
+            imagePreview.textContent = count > 0 ? `✓ ${count} image(s) selected` : '';
+            console.log('Images selected:', count);
+        });
+
+        audioInput.addEventListener('change', function () {
+            const file = this.files[0];
+            audioPreview.textContent = file ? `✓ ${file.name} selected` : '';
+            console.log('Audio selected:', file ? file.name : 'none');
+        });
+
+        // Generate button click
+        generateBtn.addEventListener('click', function () {
+            console.log('Generate button clicked!');
+
+            const imageCount = imageInput.files.length;
+            const hasAudio = audioInput.files.length > 0;
+
+            console.log('Images:', imageCount, 'Audio:', hasAudio);
+
+            if (imageCount === 0) {
+                alert('⚠️ Please upload at least one image');
+                status.innerHTML = '<strong>Error:</strong> No images selected';
+                return;
+            }
+
+            if (!hasAudio) {
+                alert('⚠️ Please upload an audio file');
+                status.innerHTML = '<strong>Error:</strong> No audio selected';
+                return;
+            }
+
+            alert(`✅ Demo: Would generate ${imageCount} videos!\n\nTo actually generate videos, install Node.js and run:\nnpm install\nnpm run dev`);
+            status.innerHTML = `<strong>Success!</strong> Would generate ${imageCount} videos with the selected audio.`;
+        });
+
+        console.log('Event listeners attached!');
+    </script>
+</body>
+
+</html>

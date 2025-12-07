@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hedra API Test</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+
+        button {
+            background: #0070f3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background: #0051cc;
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 10px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .success {
+            border-color: #10b981;
+            background: #ecfdf5;
+        }
+
+        .error {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .info {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🧪 Hedra API Test</h1>
+        <p>Test if your Hedra API key is working correctly</p>
+
+        <div class="test-section">
+            <h3>1. Check localStorage API Key</h3>
+            <button onclick="checkLocalStorage()">Check API Key</button>
+            <div id="localStorage-result" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>2. Test /api/hedra/videos endpoint</h3>
+            <button onclick="testHedraVideos()">Fetch Videos</button>
+            <div id="hedra-result" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>3. Test Direct Hedra API</h3>
+            <button onclick="testDirectHedra()">Test Direct API</button>
+            <div id="direct-result" class="result" style="display:none;"></div>
+        </div>
+    </div>
+
+    <script>
+        function checkLocalStorage() {
+            const resultDiv = document.getElementById('localStorage-result');
+            resultDiv.style.display = 'block';
+
+            const apiKey = localStorage.getItem('hedra_api_key');
+
+            if (!apiKey) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '❌ No API key found in localStorage\n\nGo to /settings and configure your Hedra API key';
+                return;
+            }
+
+            resultDiv.className = 'result success';
+            resultDiv.textContent = `✅ API Key found in localStorage\n\nKey: ${apiKey.substring(0, 10)}...${apiKey.substring(apiKey.length - 4)}\nLength: ${apiKey.length} characters`;
+        }
+
+        async function testHedraVideos() {
+            const resultDiv = document.getElementById('hedra-result');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result info';
+            resultDiv.textContent = '⏳ Testing /api/hedra/videos endpoint...';
+
+            const apiKey = localStorage.getItem('hedra_api_key');
+
+            if (!apiKey) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '❌ No API key in localStorage. Configure it in Settings first.';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/hedra/videos', {
+                    headers: {
+                        'x-hedra-api-key': apiKey
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ Success!\n\nStatus: ${response.status}\nVideos found: ${data.videos?.length || 0}\n\n${JSON.stringify(data, null, 2)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ Error ${response.status}\n\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Request failed\n\n${error.message}`;
+            }
+        }
+
+        async function testDirectHedra() {
+            const resultDiv = document.getElementById('direct-result');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result info';
+            resultDiv.textContent = '⏳ Testing direct Hedra API...';
+
+            const apiKey = localStorage.getItem('hedra_api_key');
+
+            if (!apiKey) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '❌ No API key in localStorage. Configure it in Settings first.';
+                return;
+            }
+
+            try {
+                const response = await fetch('https://api.hedra.com/web-app/public/generations', {
+                    method: 'GET',
+                    headers: {
+                        'X-API-Key': apiKey.trim(),
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ Direct Hedra API works!\n\nStatus: ${response.status}\nGenerations: ${data.data?.length || 0}\n\n${JSON.stringify(data, null, 2)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ Hedra API Error ${response.status}\n\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ CORS or Network Error\n\n${error.message}\n\nNote: Direct API calls may be blocked by CORS. This is normal - use the /api/hedra/videos endpoint instead.`;
+            }
+        }
+    </script>
+</body>
+
+</html>
