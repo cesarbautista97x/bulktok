@@ -4,21 +4,31 @@ import { NextResponse } from 'next/server'
 
 export async function POST(request: Request) {
     try {
-        const { userId } = await request.json()
+        const { userId, email } = await request.json()
 
-        if (!userId) {
-            return NextResponse.json({ error: 'User ID required' }, { status: 400 })
+        if (!userId && !email) {
+            return NextResponse.json({ error: 'User ID or email required' }, { status: 400 })
         }
 
         // Get user profile with subscription ID
-        const { data: profile, error: profileError } = await supabaseAdmin
+        let query = supabaseAdmin
             .from('profiles')
-            .select('stripe_subscription_id, subscription_tier')
-            .eq('id', userId)
-            .single()
+            .select('stripe_subscription_id, subscription_tier, id')
+
+        if (userId) {
+            query = query.eq('id', userId)
+        } else {
+            query = query.eq('email', email)
+        }
+
+        const { data: profile, error: profileError } = await query.single()
 
         if (profileError || !profile) {
-            return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
+            console.error('Profile lookup error:', profileError)
+            return NextResponse.json({
+                error: 'Profile not found',
+                details: profileError?.message
+            }, { status: 404 })
         }
 
         // If no subscription, return free tier info

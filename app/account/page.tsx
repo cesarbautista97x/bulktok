@@ -197,7 +197,10 @@ function AccountPageContent() {
             const statusResponse = await fetch('/api/stripe/subscription-status', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: user?.id }),
+                body: JSON.stringify({
+                    userId: user.id,
+                    email: user.email
+                }),
             })
 
             if (statusResponse.ok) {
