@@ -31,7 +31,7 @@ export async function POST(request: Request) {
             {
                 cancel_at_period_end: true,
             }
-        )
+        ) as any
 
         return NextResponse.json({
             success: true,

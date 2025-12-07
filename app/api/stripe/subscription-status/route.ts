@@ -32,7 +32,7 @@ export async function POST(request: Request) {
         // Fetch subscription from Stripe
         const subscription = await stripe.subscriptions.retrieve(
             profile.stripe_subscription_id
-        )
+        ) as any
 
         const currentPeriodEnd = new Date(subscription.current_period_end * 1000)
         const now = new Date()
