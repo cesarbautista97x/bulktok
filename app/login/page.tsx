@@ -111,8 +111,8 @@ export default function LoginPage() {
                     </button>
                 </form>
 
-                {/* Quick Login for Development */}
-                {process.env.NODE_ENV === 'development' && !isForgotPassword && (
+                {/* Quick Login for Testing */}
+                {!isForgotPassword && (
                     <button
                         onClick={async () => {
                             setLoading(true)
