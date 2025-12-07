@@ -17,7 +17,7 @@ const stripePromise = stripeKey && stripeKey !== 'your_stripe_publishable_key_he
     ? loadStripe(stripeKey)
     : null
 
-export default function AccountPage() {
+function AccountPageContent() {
     const { user, signOut, loading: authLoading } = useAuth()
     const router = useRouter()
     const searchParams = useSearchParams()
@@ -390,5 +390,13 @@ export default function AccountPage() {
                 </div>
             </div>
         </div>
+    )
+}
+
+export default function AccountPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 flex items-center justify-center"><div className="text-white">Loading...</div></div>}>
+            <AccountPageContent />
+        </Suspense>
     )
 }
