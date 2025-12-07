@@ -1,5 +1,5 @@
-import { supabaseAdmin } from '@/lib/supabase'
 import { stripe } from '@/lib/stripe'
+import { supabaseAdmin } from '@/lib/supabase'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
@@ -18,31 +18,39 @@ export async function GET(request: Request) {
             return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
         }
 
-        let stripeInfo = null
+        let stripeData = null
         if (profile.stripe_subscription_id) {
             try {
-                const subscription = await stripe.subscriptions.retrieve(profile.stripe_subscription_id) as any
-                stripeInfo = {
+                const subscription = await stripe.subscriptions.retrieve(profile.stripe_subscription_id)
+                stripeData = {
                     id: subscription.id,
                     status: subscription.status,
-                    current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+                    current_period_start: subscription.current_period_start,
+                    current_period_end: subscription.current_period_end,
                     cancel_at_period_end: subscription.cancel_at_period_end,
+                    canceled_at: subscription.canceled_at,
+                    ended_at: subscription.ended_at,
+                    items: subscription.items.data.map(item => ({
+                        price_id: item.price.id,
+                        product: item.price.product,
+                    })),
                 }
             } catch (e: any) {
-                stripeInfo = { error: e.message }
+                stripeData = { error: e.message, raw: e }
             }
         }
 
         return NextResponse.json({
             profile: {
+                id: profile.id,
                 email: profile.email,
                 tier: profile.subscription_tier,
                 stripe_customer_id: profile.stripe_customer_id,
                 stripe_subscription_id: profile.stripe_subscription_id,
             },
-            stripe: stripeInfo,
-        })
+            stripe: stripeData,
+        }, { status: 200 })
     } catch (error: any) {
-        return NextResponse.json({ error: error.message }, { status: 500 })
+        return NextResponse.json({ error: error.message, stack: error.stack }, { status: 500 })
     }
 }
