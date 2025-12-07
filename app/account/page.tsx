@@ -98,16 +98,29 @@ function AccountPageContent() {
         const canceled = searchParams.get('canceled')
 
         if (success) {
-            toast.success('Subscription activated! Welcome to Pro tier!')
-            // Reload profile to get updated tier
+            toast.success('Subscription activated!')
+            // Reload profile and subscription status
             if (user) {
+                // Reload profile
                 supabase
                     .from('profiles')
                     .select('*')
                     .eq('id', user.id)
                     .single()
                     .then(({ data }) => {
-                        if (data) setLocalProfile(data)
+                        if (data) {
+                            setLocalProfile(data)
+                            // Also reload subscription status
+                            fetch('/api/stripe/subscription-status', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ userId: user.id }),
+                            })
+                                .then(res => res.json())
+                                .then(statusData => {
+                                    setSubscriptionStatus(statusData)
+                                })
+                        }
                     })
             }
             // Clean URL

@@ -40,8 +40,8 @@ export async function POST(request: Request) {
 
                 console.log('Checkout completed:', { customerId, subscriptionId, tier })
 
-                // Update user profile with correct tier
-                const { error } = await supabase
+                // Update user profile with correct tier using admin client
+                const { error } = await supabaseAdmin
                     .from('profiles')
                     .update({
                         subscription_tier: tier,
