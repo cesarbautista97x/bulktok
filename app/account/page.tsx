@@ -73,7 +73,11 @@ function AccountPageContent() {
 
                 if (response.ok) {
                     const data = await response.json()
+                    console.log('Subscription status loaded:', data)
                     setSubscriptionStatus(data)
+                } else {
+                    const error = await response.json()
+                    console.error('Failed to load subscription status:', error)
                 }
             } catch (error) {
                 console.error('Error loading subscription status:', error)
