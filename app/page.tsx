@@ -7,8 +7,8 @@ export default function HomePage() {
     const router = useRouter()
 
     useEffect(() => {
-        // Auto-redirect to generate - no login required
-        router.push('/generate')
+        // Auto-redirect to login page
+        router.push('/login')
     }, [router])
 
     return (
