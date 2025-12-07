@@ -44,6 +44,21 @@ export async function POST(request: Request) {
             profile.stripe_subscription_id
         ) as any
 
+        console.log('Stripe subscription data:', {
+            id: subscription.id,
+            status: subscription.status,
+            current_period_end: subscription.current_period_end,
+            cancel_at_period_end: subscription.cancel_at_period_end,
+        })
+
+        if (!subscription.current_period_end) {
+            console.error('No current_period_end in subscription')
+            return NextResponse.json({
+                error: 'Invalid subscription data',
+                details: 'Missing current_period_end'
+            }, { status: 500 })
+        }
+
         const currentPeriodEnd = new Date(subscription.current_period_end * 1000)
         const now = new Date()
         const daysRemaining = Math.ceil((currentPeriodEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
@@ -52,7 +67,7 @@ export async function POST(request: Request) {
             tier: profile.subscription_tier,
             hasSubscription: true,
             status: subscription.status,
-            cancelAtPeriodEnd: subscription.cancel_at_period_end,
+            cancelAtPeriodEnd: subscription.cancel_at_period_end || false,
             currentPeriodEnd: currentPeriodEnd.toISOString(),
             daysRemaining,
             cancelAt: subscription.cancel_at ? new Date(subscription.cancel_at * 1000).toISOString() : null,
@@ -60,7 +75,10 @@ export async function POST(request: Request) {
     } catch (error: any) {
         console.error('Subscription status error:', error)
         return NextResponse.json(
-            { error: error.message },
+            {
+                error: error.message,
+                details: error.stack
+            },
             { status: 500 }
         )
     }
