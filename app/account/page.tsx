@@ -433,6 +433,15 @@ function AccountPageContent() {
                                     Upgrade to Unlimited
                                 </button>
                             </div>
+                            {!subscriptionStatus?.cancelAtPeriodEnd && (
+                                <button
+                                    onClick={handleCancelSubscription}
+                                    disabled={isCanceling}
+                                    className="w-full px-4 py-2 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg border border-red-200 transition-colors disabled:opacity-50"
+                                >
+                                    {isCanceling ? 'Canceling...' : 'Cancel Subscription'}
+                                </button>
+                            )}
                         </div>
                     )}
 
