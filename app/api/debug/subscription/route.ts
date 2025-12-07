@@ -22,21 +22,10 @@ export async function GET(request: Request) {
         if (profile.stripe_subscription_id) {
             try {
                 const subscription = await stripe.subscriptions.retrieve(profile.stripe_subscription_id) as any
-                stripeData = {
-                    id: subscription.id,
-                    status: subscription.status,
-                    current_period_start: subscription.current_period_start,
-                    current_period_end: subscription.current_period_end,
-                    cancel_at_period_end: subscription.cancel_at_period_end,
-                    canceled_at: subscription.canceled_at,
-                    ended_at: subscription.ended_at,
-                    items: subscription.items.data.map((item: any) => ({
-                        price_id: item.price.id,
-                        product: item.price.product,
-                    })),
-                }
+                // Return full subscription object for debugging
+                stripeData = subscription
             } catch (e: any) {
-                stripeData = { error: e.message, raw: e }
+                stripeData = { error: e.message }
             }
         }
 
