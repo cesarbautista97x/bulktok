@@ -308,6 +308,14 @@ export default function HomePage() {
                                 <li><a href="#" className="hover:text-white transition-colors">FAQ</a></li>
                             </ul>
                         </div>
+                        <div>
+                            <h4 className="text-white font-semibold mb-4">Legal</h4>
+                            <ul className="space-y-2 text-sm">
+                                <li><Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
+                                <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+                                <li><Link href="/refund" className="hover:text-white transition-colors">Refund Policy</Link></li>
+                            </ul>
+                        </div>
                     </div>
                     <div className="border-t border-neutral-800 pt-8 text-center text-sm">
                         <p>&copy; 2025 BulkTok. All rights reserved.</p>
