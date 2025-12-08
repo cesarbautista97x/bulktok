@@ -40,9 +40,23 @@ export async function POST(request: Request) {
         }
 
         // Fetch subscription from Stripe
-        const subscription = await stripe.subscriptions.retrieve(
-            profile.stripe_subscription_id
-        )
+        let subscription
+        try {
+            subscription = await stripe.subscriptions.retrieve(
+                profile.stripe_subscription_id
+            )
+        } catch (stripeError: any) {
+            console.error('Stripe subscription retrieval error:', stripeError)
+            // If subscription not found in Stripe, return free tier
+            if (stripeError.code === 'resource_missing') {
+                return NextResponse.json({
+                    tier: profile.subscription_tier,
+                    hasSubscription: false,
+                    error: 'Subscription not found in Stripe',
+                })
+            }
+            throw stripeError
+        }
 
         console.log('Full subscription object:', JSON.stringify(subscription, null, 2))
 
