@@ -49,8 +49,12 @@ export default function DownloadsPage() {
 
             // Fetch API key from database
             const settingsResponse = await fetch(`/api/settings?userId=${user.id}`)
+
             if (!settingsResponse.ok) {
-                toast.error('Failed to load API key from settings')
+                console.error('Settings API error:', settingsResponse.status)
+                const errorData = await settingsResponse.json().catch(() => ({}))
+                console.error('Error details:', errorData)
+                toast.error('Failed to load API key. Please configure it in Account settings.')
                 setIsLoading(false)
                 return
             }
@@ -59,10 +63,18 @@ export default function DownloadsPage() {
             const apiKey = settingsData.hedra_api_key
 
             if (!apiKey) {
-                toast.error('Please configure your Hedra API key in Settings')
+                toast.error('Please configure your Hedra API key in Account settings first', {
+                    duration: 5000,
+                    action: {
+                        label: 'Go to Account',
+                        onClick: () => window.location.href = '/account'
+                    }
+                })
                 setIsLoading(false)
                 return
             }
+
+            console.log('Fetching videos with API key:', apiKey.substring(0, 10) + '...')
 
             const response = await fetch('/api/hedra/videos', {
                 headers: {
@@ -71,14 +83,17 @@ export default function DownloadsPage() {
             })
 
             if (!response.ok) {
-                throw new Error('Failed to fetch videos')
+                const errorData = await response.json().catch(() => ({}))
+                console.error('Hedra API error:', response.status, errorData)
+                throw new Error(errorData.error || 'Failed to fetch videos')
             }
 
             const data = await response.json()
+            console.log('Received videos:', data.videos?.length || 0)
             setVideos(data.videos || [])
         } catch (error) {
             console.error('Fetch error:', error)
-            toast.error('Failed to load videos from Hedra')
+            toast.error(error instanceof Error ? error.message : 'Failed to load videos from Hedra')
         } finally {
             setIsLoading(false)
         }
