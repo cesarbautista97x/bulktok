@@ -124,49 +124,51 @@ export default function HomePage() {
                     </div>
 
                     {/* Video Features */}
-                    <div className="mt-12 grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-                        <div className="flex items-start gap-4">
-                            <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                                <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                </svg>
+                    <div className="mt-12 flex justify-center">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6 max-w-2xl">
+                            <div className="flex items-start gap-4">
+                                <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                    <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 className="font-semibold text-neutral-900 mb-1">Upload in Bulk</h4>
+                                    <p className="text-neutral-600 text-sm">Drag and drop hundreds of files at once</p>
+                                </div>
                             </div>
-                            <div>
-                                <h4 className="font-semibold text-neutral-900 mb-1">Upload in Bulk</h4>
-                                <p className="text-neutral-600 text-sm">Drag and drop hundreds of files at once</p>
+                            <div className="flex items-start gap-4">
+                                <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                    <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 className="font-semibold text-neutral-900 mb-1">Automatic Processing</h4>
+                                    <p className="text-neutral-600 text-sm">AI generates videos while you sleep</p>
+                                </div>
                             </div>
-                        </div>
-                        <div className="flex items-start gap-4">
-                            <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                                <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                </svg>
+                            <div className="flex items-start gap-4">
+                                <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                    <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 className="font-semibold text-neutral-900 mb-1">Track Progress</h4>
+                                    <p className="text-neutral-600 text-sm">Monitor all your videos in real-time</p>
+                                </div>
                             </div>
-                            <div>
-                                <h4 className="font-semibold text-neutral-900 mb-1">Automatic Processing</h4>
-                                <p className="text-neutral-600 text-sm">AI generates videos while you sleep</p>
-                            </div>
-                        </div>
-                        <div className="flex items-start gap-4">
-                            <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                                <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                </svg>
-                            </div>
-                            <div>
-                                <h4 className="font-semibold text-neutral-900 mb-1">Track Progress</h4>
-                                <p className="text-neutral-600 text-sm">Monitor all your videos in real-time</p>
-                            </div>
-                        </div>
-                        <div className="flex items-start gap-4">
-                            <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                                <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                </svg>
-                            </div>
-                            <div>
-                                <h4 className="font-semibold text-neutral-900 mb-1">Download Everything</h4>
-                                <p className="text-neutral-600 text-sm">Get all videos with one click</p>
+                            <div className="flex items-start gap-4">
+                                <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                    <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 className="font-semibold text-neutral-900 mb-1">Download Everything</h4>
+                                    <p className="text-neutral-600 text-sm">Get all videos with one click</p>
+                                </div>
                             </div>
                         </div>
                     </div>
