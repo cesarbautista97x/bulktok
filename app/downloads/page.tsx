@@ -24,7 +24,7 @@ export default function DownloadsPage() {
     const [isDownloading, setIsDownloading] = useState(false)
     const [downloadProgress, setDownloadProgress] = useState(0)
     const [statusFilter, setStatusFilter] = useState<'all' | 'complete' | 'processing' | 'failed'>('all')
-    const [selectedRange, setSelectedRange] = useState<TimeRange>('last24h')
+    const [selectedRange, setSelectedRange] = useState<TimeRange>('all')
     const [customStartDate, setCustomStartDate] = useState('')
     const [customEndDate, setCustomEndDate] = useState('')
 
