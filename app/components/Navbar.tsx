@@ -11,10 +11,10 @@ export default function Navbar() {
     const navLinks = [
         { href: '/generate', label: 'Generate' },
         { href: '/downloads', label: 'Downloads' },
-        { href: '/logs', label: 'Logs' },
-        { href: '/settings', label: 'Settings' },
+        { href: '/pricing', label: 'Pricing' },
         { href: '/account', label: 'Account' },
     ]
+
 
     const isActive = (href: string) => pathname === href
 

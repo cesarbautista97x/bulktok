@@ -429,7 +429,7 @@ function AccountPageContent() {
                 )}
 
                 {/* API Configuration */}
-                <div className="bg-white rounded-xl shadow-sm border border-neutral-200 p-6">
+                <div className="bg-white rounded-xl shadow-sm border border-neutral-200 p-6 mb-8">
                     <h2 className="text-xl font-semibold text-neutral-900 mb-4">
                         Hedra API Configuration
                     </h2>
@@ -501,7 +501,7 @@ function AccountPageContent() {
                 </div>
 
                 {/* Subscription Card */}
-                <div className="bg-white rounded-xl shadow-sm border border-neutral-200 p-6 mb-6">
+                <div className="bg-white rounded-xl shadow-sm border border-neutral-200 p-6 mb-8">
                     <h2 className="text-xl font-semibold text-neutral-900 mb-4">
                         Subscription
                     </h2>
@@ -651,7 +651,7 @@ function AccountPageContent() {
                 </div>
 
                 {/* Account Info */}
-                <div className="bg-white rounded-xl shadow-sm border border-neutral-200 p-6">
+                <div className="bg-white rounded-xl shadow-sm border border-neutral-200 p-6 mb-8">
                     <h2 className="text-xl font-semibold text-neutral-900 mb-4">
                         Account Information
                     </h2>
