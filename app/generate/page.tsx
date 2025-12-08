@@ -92,11 +92,19 @@ export default function GeneratePage() {
                 })
             }, 200)
 
+            // Get API key from profile
+            if (!profile?.hedra_api_key) {
+                toast.error('Please configure your Hedra API key in Account settings first')
+                setIsGenerating(false)
+                setUploadProgress(0)
+                return
+            }
+
             const response = await fetch('/api/generate', {
                 method: 'POST',
                 headers: {
                     ...headers,
-                    'x-hedra-api-key': localStorage.getItem('hedra_api_key') || '',
+                    'x-hedra-api-key': profile.hedra_api_key,
                 },
                 body: formData,
             })
