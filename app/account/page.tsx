@@ -363,13 +363,15 @@ function AccountPageContent() {
                     </div>
 
                     {/* Subscription Status - Show for paid tiers */}
-                    {subscriptionStatus?.hasSubscription && subscriptionStatus.currentPeriodEnd && (
+                    {subscriptionStatus?.hasSubscription && (subscriptionStatus.currentPeriodEnd || subscriptionStatus.cancelAt) && (
                         <div className="mb-4 p-4 bg-neutral-50 rounded-lg border border-neutral-200">
                             <div className="flex items-center justify-between mb-2">
                                 <div>
-                                    <p className="text-sm font-medium text-neutral-700">Next Billing Date</p>
+                                    <p className="text-sm font-medium text-neutral-700">
+                                        {subscriptionStatus.cancelAtPeriodEnd ? 'Access Until' : 'Next Billing Date'}
+                                    </p>
                                     <p className="text-lg font-semibold text-neutral-900">
-                                        {new Date(subscriptionStatus.currentPeriodEnd).toLocaleDateString('en-US', {
+                                        {new Date(subscriptionStatus.currentPeriodEnd || subscriptionStatus.cancelAt).toLocaleDateString('en-US', {
                                             month: 'long',
                                             day: 'numeric',
                                             year: 'numeric'
@@ -379,7 +381,9 @@ function AccountPageContent() {
                                 <div className="text-right">
                                     <p className="text-sm font-medium text-neutral-700">Days Remaining</p>
                                     <p className="text-lg font-semibold text-primary-600">
-                                        {subscriptionStatus.daysRemaining} days
+                                        {subscriptionStatus.daysRemaining ??
+                                            Math.max(0, Math.ceil((new Date(subscriptionStatus.cancelAt).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)))
+                                        } days
                                     </p>
                                 </div>
                             </div>
@@ -387,8 +391,7 @@ function AccountPageContent() {
                             {subscriptionStatus.cancelAtPeriodEnd && (
                                 <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                                     <p className="text-sm text-yellow-800">
-                                        ⚠️ Your subscription will be canceled on {new Date(subscriptionStatus.currentPeriodEnd).toLocaleDateString()}.
-                                        You'll retain access until then.
+                                        ⚠️ Your subscription has been canceled. You'll retain access until {new Date(subscriptionStatus.currentPeriodEnd || subscriptionStatus.cancelAt).toLocaleDateString()}.
                                     </p>
                                 </div>
                             )}
