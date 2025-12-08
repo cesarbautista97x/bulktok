@@ -240,7 +240,25 @@ export default function GeneratePage() {
                         <h2 className="text-lg font-semibold text-neutral-900 mb-4">
                             1. Upload Images
                         </h2>
-                        <ImageUpload images={images} onImagesChange={setImages} />
+                        <ImageUpload
+                            images={images}
+                            onImagesChange={setImages}
+                            maxFiles={profile ? (
+                                profile.subscription_tier === 'unlimited' ? 999 :
+                                    profile.subscription_tier === 'pro' ? Math.max(0, 300 - (profile.videos_generated_this_month || 0)) :
+                                        Math.max(0, 5 - (profile.videos_generated_this_month || 0))
+                            ) : 50}
+                        />
+                        {profile && profile.subscription_tier === 'free' && (
+                            <p className="text-sm text-amber-600 mt-3">
+                                💡 Free plan: You can upload up to {Math.max(0, 5 - (profile.videos_generated_this_month || 0))} more images this month. <button onClick={() => router.push('/pricing')} className="underline font-medium">Upgrade for more</button>
+                            </p>
+                        )}
+                        {profile && profile.subscription_tier === 'pro' && (
+                            <p className="text-sm text-blue-600 mt-3">
+                                💎 Pro plan: You can upload up to {Math.max(0, 300 - (profile.videos_generated_this_month || 0))} more images this month.
+                            </p>
+                        )}
                     </div>
 
                     {/* Audio Upload */}
