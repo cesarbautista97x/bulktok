@@ -97,23 +97,30 @@ export default function HomePage() {
                     {/* Video Player */}
                     <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
                         <div className="aspect-video bg-neutral-900 flex items-center justify-center relative">
-                            {/* Placeholder for demo video */}
-                            <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
-                                <svg className="w-24 h-24 mb-4 opacity-50" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" />
-                                </svg>
-                                <p className="text-lg opacity-75">Demo Video Coming Soon</p>
-                                <p className="text-sm opacity-50 mt-2">Replace this with your actual demo video</p>
+                            {/* Demo Video Placeholder */}
+                            <img
+                                src="/demo-placeholder.png"
+                                alt="BulkTok Demo - Watch how to automate video generation"
+                                className="w-full h-full object-cover"
+                            />
+
+                            {/* Play button overlay */}
+                            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-20 hover:bg-opacity-30 transition-all cursor-pointer group">
+                                <div className="w-20 h-20 bg-white bg-opacity-90 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <svg className="w-10 h-10 text-primary-600 ml-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                                    </svg>
+                                </div>
                             </div>
 
-                            {/* Uncomment and add your video URL here */}
+                            {/* When you have a real video, replace the above with: */}
                             {/* 
                             <video 
                                 className="w-full h-full" 
                                 controls 
-                                poster="/path/to/thumbnail.jpg"
+                                poster="/demo-placeholder.png"
                             >
-                                <source src="/path/to/your/demo-video.mp4" type="video/mp4" />
+                                <source src="/demo-video.mp4" type="video/mp4" />
                                 Your browser does not support the video tag.
                             </video>
                             */}
