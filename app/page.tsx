@@ -2,15 +2,12 @@
 
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import CursorEffect from '@/app/components/CursorEffect'
 
 export default function HomePage() {
     const router = useRouter()
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-primary-50 relative">
-            {/* Cursor Effect */}
-            <CursorEffect />
 
             {/* Hero Section */}
             <div className="relative overflow-hidden">
