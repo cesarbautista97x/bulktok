@@ -64,7 +64,12 @@ export default function PricingPage() {
                 {/* Pricing Cards */}
                 <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
                     {/* Pro Plan */}
-                    <div className="bg-white rounded-2xl shadow-xl border-2 border-neutral-200 p-8 hover:border-primary-300 transition-all duration-300">
+                    <div className="bg-white rounded-2xl shadow-xl border-2 border-neutral-200 p-8 hover:border-primary-300 transition-all duration-300 relative">
+                        {/* December Promotion Badge */}
+                        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-green-600 text-white font-bold px-4 py-1 rounded-full text-sm shadow-lg">
+                            🎄 December Special
+                        </div>
+
                         <div className="mb-6">
                             <h3 className="text-2xl font-bold text-neutral-900 mb-2">Pro Plan</h3>
                             <div className="flex items-baseline gap-2">
@@ -84,7 +89,7 @@ export default function PricingPage() {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                     </svg>
                                     <span className="text-neutral-700">
-                                        <strong>200 videos per month</strong> - Generate up to 200 high-quality videos
+                                        <strong>300 videos per month</strong> - Generate up to 300 high-quality videos
                                     </span>
                                 </li>
                                 <li className="flex items-start gap-3">
@@ -129,6 +134,13 @@ export default function PricingPage() {
                         >
                             {isLoading === 'pro' ? 'Processing...' : 'Get Started with Pro'}
                         </button>
+
+                        {/* December Promotion Notice */}
+                        <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                            <p className="text-sm text-green-800 text-center">
+                                <strong>🎄 December Only:</strong> Get 300 videos/month! New subscriptions after December will get 200 videos/month.
+                            </p>
+                        </div>
                     </div>
 
                     {/* Unlimited Plan */}

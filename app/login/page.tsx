@@ -9,7 +9,7 @@ import { supabase } from '@/lib/supabase-client'
 export default function LoginPage() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const [isSignUp, setIsSignUp] = useState(false)
+    const [isSignUp, setIsSignUp] = useState(true)
     const [isForgotPassword, setIsForgotPassword] = useState(false)
     const [loading, setLoading] = useState(false)
     const { signInWithEmail, signUpWithEmail, user } = useAuth()
