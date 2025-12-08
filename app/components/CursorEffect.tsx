@@ -2,19 +2,17 @@
 
 import { useEffect, useRef } from 'react'
 
-interface Particle {
+interface Dot {
     x: number
     y: number
-    vx: number
-    vy: number
-    life: number
-    maxLife: number
+    baseX: number
+    baseY: number
 }
 
 export default function CursorEffect() {
     const canvasRef = useRef<HTMLCanvasElement>(null)
-    const particlesRef = useRef<Particle[]>([])
-    const mouseRef = useRef({ x: 0, y: 0 })
+    const dotsRef = useRef<Dot[]>([])
+    const mouseRef = useRef({ x: -1000, y: -1000 })
     const animationFrameRef = useRef<number>()
 
     useEffect(() => {
@@ -28,85 +26,120 @@ export default function CursorEffect() {
         const resizeCanvas = () => {
             canvas.width = window.innerWidth
             canvas.height = window.innerHeight
+
+            // Regenerate dots on resize
+            generateDots()
         }
+
+        // Generate grid of dots
+        const generateDots = () => {
+            dotsRef.current = []
+            const spacing = 40 // Distance between dots
+            const cols = Math.ceil(canvas.width / spacing)
+            const rows = Math.ceil(canvas.height / spacing)
+
+            for (let i = 0; i < cols; i++) {
+                for (let j = 0; j < rows; j++) {
+                    dotsRef.current.push({
+                        x: i * spacing,
+                        y: j * spacing,
+                        baseX: i * spacing,
+                        baseY: j * spacing
+                    })
+                }
+            }
+        }
+
         resizeCanvas()
         window.addEventListener('resize', resizeCanvas)
 
         // Mouse move handler
         const handleMouseMove = (e: MouseEvent) => {
             mouseRef.current = { x: e.clientX, y: e.clientY }
-
-            // Create new particles
-            for (let i = 0; i < 2; i++) {
-                particlesRef.current.push({
-                    x: e.clientX,
-                    y: e.clientY,
-                    vx: (Math.random() - 0.5) * 2,
-                    vy: (Math.random() - 0.5) * 2,
-                    life: 0,
-                    maxLife: 60 + Math.random() * 40
-                })
-            }
         }
 
         // Animation loop
         const animate = () => {
             if (!ctx || !canvas) return
 
-            // Clear canvas with slight trail effect
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.1)'
-            ctx.fillRect(0, 0, canvas.width, canvas.height)
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-            // Update and draw particles
-            particlesRef.current = particlesRef.current.filter(particle => {
-                particle.life++
-                particle.x += particle.vx
-                particle.y += particle.vy
-                particle.vx *= 0.98
-                particle.vy *= 0.98
+            const mouse = mouseRef.current
+            const interactionRadius = 150 // Distance at which dots react to mouse
 
-                // Calculate opacity based on life
-                const opacity = 1 - (particle.life / particle.maxLife)
+            // Draw dots
+            dotsRef.current.forEach(dot => {
+                // Calculate distance to mouse
+                const dx = mouse.x - dot.baseX
+                const dy = mouse.y - dot.baseY
+                const distance = Math.sqrt(dx * dx + dy * dy)
 
-                if (opacity > 0) {
-                    // Draw particle
-                    const size = 2 + (1 - particle.life / particle.maxLife) * 2
+                // Calculate opacity based on distance
+                let opacity = 0.15
+                let size = 2
 
-                    // Gradient for particle
-                    const gradient = ctx.createRadialGradient(
-                        particle.x, particle.y, 0,
-                        particle.x, particle.y, size
-                    )
-                    gradient.addColorStop(0, `rgba(14, 165, 233, ${opacity * 0.8})`)
-                    gradient.addColorStop(1, `rgba(14, 165, 233, 0)`)
+                if (distance < interactionRadius) {
+                    // Closer to mouse = more visible
+                    const proximity = 1 - (distance / interactionRadius)
+                    opacity = 0.15 + (proximity * 0.6)
+                    size = 2 + (proximity * 2)
 
-                    ctx.fillStyle = gradient
-                    ctx.beginPath()
-                    ctx.arc(particle.x, particle.y, size, 0, Math.PI * 2)
-                    ctx.fill()
-
-                    return true
+                    // Move dot slightly toward mouse
+                    const force = proximity * 0.1
+                    dot.x = dot.baseX + (dx * force)
+                    dot.y = dot.baseY + (dy * force)
+                } else {
+                    // Return to base position
+                    dot.x += (dot.baseX - dot.x) * 0.1
+                    dot.y += (dot.baseY - dot.y) * 0.1
                 }
-                return false
+
+                // Draw dot
+                ctx.fillStyle = `rgba(59, 130, 246, ${opacity})` // Blue color
+                ctx.beginPath()
+                ctx.arc(dot.x, dot.y, size, 0, Math.PI * 2)
+                ctx.fill()
             })
 
-            // Draw connections between nearby particles
-            ctx.strokeStyle = 'rgba(14, 165, 233, 0.1)'
+            // Draw connections between nearby dots
+            ctx.strokeStyle = 'rgba(59, 130, 246, 0.1)'
             ctx.lineWidth = 1
 
-            for (let i = 0; i < particlesRef.current.length; i++) {
-                for (let j = i + 1; j < particlesRef.current.length; j++) {
-                    const dx = particlesRef.current[i].x - particlesRef.current[j].x
-                    const dy = particlesRef.current[i].y - particlesRef.current[j].y
+            for (let i = 0; i < dotsRef.current.length; i++) {
+                const dot1 = dotsRef.current[i]
+
+                // Only check nearby dots for performance
+                for (let j = i + 1; j < dotsRef.current.length; j++) {
+                    const dot2 = dotsRef.current[j]
+                    const dx = dot1.x - dot2.x
+                    const dy = dot1.y - dot2.y
                     const distance = Math.sqrt(dx * dx + dy * dy)
 
-                    if (distance < 100) {
-                        const opacity = (1 - distance / 100) * 0.3
-                        ctx.strokeStyle = `rgba(14, 165, 233, ${opacity})`
-                        ctx.beginPath()
-                        ctx.moveTo(particlesRef.current[i].x, particlesRef.current[i].y)
-                        ctx.lineTo(particlesRef.current[j].x, particlesRef.current[j].y)
-                        ctx.stroke()
+                    // Only draw connection if dots are close
+                    if (distance < 80) {
+                        // Check if either dot is near mouse
+                        const dist1ToMouse = Math.sqrt(
+                            Math.pow(mouse.x - dot1.baseX, 2) +
+                            Math.pow(mouse.y - dot1.baseY, 2)
+                        )
+                        const dist2ToMouse = Math.sqrt(
+                            Math.pow(mouse.x - dot2.baseX, 2) +
+                            Math.pow(mouse.y - dot2.baseY, 2)
+                        )
+
+                        const minDistToMouse = Math.min(dist1ToMouse, dist2ToMouse)
+
+                        if (minDistToMouse < interactionRadius) {
+                            const proximity = 1 - (minDistToMouse / interactionRadius)
+                            const opacity = proximity * 0.3
+
+                            ctx.strokeStyle = `rgba(59, 130, 246, ${opacity})`
+                            ctx.beginPath()
+                            ctx.moveTo(dot1.x, dot1.y)
+                            ctx.lineTo(dot2.x, dot2.y)
+                            ctx.stroke()
+                        }
                     }
                 }
             }
@@ -130,7 +163,7 @@ export default function CursorEffect() {
         <canvas
             ref={canvasRef}
             className="fixed top-0 left-0 w-full h-full pointer-events-none z-0"
-            style={{ mixBlendMode: 'normal' }}
+            style={{ opacity: 0.6 }}
         />
     )
 }
