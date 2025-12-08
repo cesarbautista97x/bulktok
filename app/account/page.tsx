@@ -91,6 +91,28 @@ function AccountPageContent() {
         loadSubscriptionStatus()
     }, [user, localProfile])
 
+    // Load API key
+    useEffect(() => {
+        const loadApiKey = async () => {
+            if (!user) return
+
+            try {
+                const response = await fetch(`/api/settings?userId=${user.id}`)
+                if (response.ok) {
+                    const data = await response.json()
+                    if (data.hedraApiKey) {
+                        setHedraApiKey(data.hedraApiKey)
+                    }
+                }
+            } catch (error) {
+                // Silent error handling
+            }
+        }
+
+        loadApiKey()
+    }, [user])
+
+
     // Use local profile instead of AuthProvider profile
     const profile = localProfile
     const loading = authLoading || profileLoading
@@ -222,6 +244,48 @@ function AccountPageContent() {
         }
     }
 
+    const handleSaveApiKey = async () => {
+        const trimmedKey = hedraApiKey.trim()
+
+        if (!trimmedKey) {
+            toast.error('Please enter your Hedra API key')
+            return
+        }
+
+        setIsSavingApiKey(true)
+
+        try {
+            if (!user) {
+                toast.error('You must be logged in')
+                setIsSavingApiKey(false)
+                return
+            }
+
+            const response = await fetch('/api/settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ hedraApiKey: trimmedKey, userId: user.id }),
+            })
+
+            if (response.ok) {
+                toast.success('API key saved successfully!')
+            } else {
+                toast.error('Failed to save API key')
+            }
+        } catch (error) {
+            console.error('Save API key error:', error)
+            toast.error('Failed to save API key')
+        } finally {
+            setIsSavingApiKey(false)
+        }
+    }
+
+    const maskApiKey = (key: string) => {
+        if (!key || key.length < 8) return key
+        return key.substring(0, 4) + '•'.repeat(key.length - 8) + key.substring(key.length - 4)
+    }
+
+
     const handleSignOut = async () => {
         try {
             await signOut()
@@ -339,6 +403,99 @@ function AccountPageContent() {
                                     {tierBadge.emoji} {tierBadge.label} Account
                                 </span>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* API Key Warning - Show if not configured */}
+                {!hedraApiKey && (
+                    <div className="mb-6 bg-yellow-50 border-2 border-yellow-400 rounded-xl p-6">
+                        <div className="flex items-start space-x-4">
+                            <svg className="w-8 h-8 text-yellow-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                            <div className="flex-1">
+                                <h3 className="text-lg font-bold text-yellow-900 mb-2">⚠️ API Key Required</h3>
+                                <p className="text-yellow-800 mb-3">
+                                    You need to configure your Hedra API key before you can generate videos.
+                                    Scroll down to the <strong>"Hedra API Configuration"</strong> section below to set it up.
+                                </p>
+                                <p className="text-sm text-yellow-700">
+                                    The app will work for testing, but video generation will fail without a valid API key.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* API Configuration */}
+                <div className="bg-white rounded-xl shadow-sm border border-neutral-200 p-6">
+                    <h2 className="text-xl font-semibold text-neutral-900 mb-4">
+                        Hedra API Configuration
+                    </h2>
+
+                    <div className="space-y-4">
+                        {/* Info Box */}
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <div className="flex items-start space-x-3">
+                                <svg className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <div className="text-sm text-blue-900">
+                                    <p className="font-medium mb-1">Get your Hedra API key:</p>
+                                    <ol className="list-decimal list-inside space-y-1 text-blue-800">
+                                        <li>Sign up at <a href="https://hedra.com" target="_blank" rel="noopener noreferrer" className="underline">hedra.com</a></li>
+                                        <li>Go to your dashboard</li>
+                                        <li>Copy your API key</li>
+                                        <li>Paste it below and click "Save"</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* API Key Input */}
+                        <div>
+                            <label className="block text-sm font-medium text-neutral-700 mb-2">
+                                Hedra API Key
+                            </label>
+                            <input
+                                type="password"
+                                value={hedraApiKey}
+                                onChange={(e) => setHedraApiKey(e.target.value)}
+                                placeholder="Enter your Hedra API key"
+                                className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent font-mono text-sm"
+                            />
+                            {hedraApiKey && (
+                                <p className="text-xs text-neutral-500 mt-2">
+                                    Current key: {maskApiKey(hedraApiKey)}
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex space-x-3">
+                            <button
+                                onClick={handleSaveApiKey}
+                                disabled={isSavingApiKey}
+                                className="btn-primary"
+                            >
+                                {isSavingApiKey ? (
+                                    <span className="flex items-center space-x-2">
+                                        <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        <span>Saving...</span>
+                                    </span>
+                                ) : (
+                                    'Save API Key'
+                                )}
+                            </button>
+                        </div>
+
+                        {/* Info about testing */}
+                        <div className="mt-4 text-sm text-neutral-600">
+                            <p>💡 <strong>Tip:</strong> Your API key will be validated when you generate your first video. Check the Logs page to see if it works correctly.</p>
                         </div>
                     </div>
                 </div>
