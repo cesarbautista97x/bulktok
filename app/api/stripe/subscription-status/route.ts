@@ -58,39 +58,54 @@ export async function POST(request: Request) {
             throw stripeError
         }
 
-        console.log('Full subscription object:', JSON.stringify(subscription, null, 2))
+        console.log('Stripe subscription retrieved:', {
+            id: subscription.id,
+            status: subscription.status,
+            current_period_end: (subscription as any).current_period_end,
+            cancel_at_period_end: (subscription as any).cancel_at_period_end,
+            canceled_at: (subscription as any).canceled_at,
+        })
 
-        // Access fields directly without type casting issues
+        // Access fields with type safety
         const subData: any = subscription
 
-        if (!subData.current_period_end) {
-            console.error('Missing current_period_end:', {
-                hasField: 'current_period_end' in subData,
-                value: subData.current_period_end,
-                allKeys: Object.keys(subData),
-            })
-            return NextResponse.json({
-                error: 'Invalid subscription data',
-                details: 'Missing current_period_end',
-                debug: {
-                    hasField: 'current_period_end' in subData,
-                    keys: Object.keys(subData).slice(0, 20),
-                }
-            }, { status: 500 })
-        }
-
-        const currentPeriodEnd = new Date(subData.current_period_end * 1000)
-        const now = new Date()
-        const daysRemaining = Math.ceil((currentPeriodEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
-
-        const result = {
+        // Build result object based on available data
+        const result: any = {
             tier: profile.subscription_tier,
             hasSubscription: true,
             status: subData.status,
             cancelAtPeriodEnd: subData.cancel_at_period_end || false,
-            currentPeriodEnd: currentPeriodEnd.toISOString(),
-            daysRemaining,
-            cancelAt: subData.cancel_at ? new Date(subData.cancel_at * 1000).toISOString() : null,
+        }
+
+        // Add period end and days remaining if available
+        if (subData.current_period_end) {
+            try {
+                const currentPeriodEnd = new Date(subData.current_period_end * 1000)
+                const now = new Date()
+                const daysRemaining = Math.ceil((currentPeriodEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+
+                result.currentPeriodEnd = currentPeriodEnd.toISOString()
+                result.daysRemaining = Math.max(0, daysRemaining) // Don't show negative days
+            } catch (dateError) {
+                console.error('Error parsing current_period_end:', dateError)
+            }
+        }
+
+        // Add cancellation info if available
+        if (subData.cancel_at) {
+            try {
+                result.cancelAt = new Date(subData.cancel_at * 1000).toISOString()
+            } catch (dateError) {
+                console.error('Error parsing cancel_at:', dateError)
+            }
+        }
+
+        if (subData.canceled_at) {
+            try {
+                result.canceledAt = new Date(subData.canceled_at * 1000).toISOString()
+            } catch (dateError) {
+                console.error('Error parsing canceled_at:', dateError)
+            }
         }
 
         console.log('Returning subscription status:', result)

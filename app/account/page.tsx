@@ -363,25 +363,23 @@ function AccountPageContent() {
                     </div>
 
                     {/* Subscription Status - Show for paid tiers */}
-                    {subscriptionStatus?.hasSubscription && (
+                    {subscriptionStatus?.hasSubscription && subscriptionStatus.currentPeriodEnd && (
                         <div className="mb-4 p-4 bg-neutral-50 rounded-lg border border-neutral-200">
                             <div className="flex items-center justify-between mb-2">
                                 <div>
                                     <p className="text-sm font-medium text-neutral-700">Next Billing Date</p>
                                     <p className="text-lg font-semibold text-neutral-900">
-                                        {subscriptionStatus.currentPeriodEnd ?
-                                            new Date(subscriptionStatus.currentPeriodEnd).toLocaleDateString('en-US', {
-                                                month: 'long',
-                                                day: 'numeric',
-                                                year: 'numeric'
-                                            }) : 'Loading...'
-                                        }
+                                        {new Date(subscriptionStatus.currentPeriodEnd).toLocaleDateString('en-US', {
+                                            month: 'long',
+                                            day: 'numeric',
+                                            year: 'numeric'
+                                        })}
                                     </p>
                                 </div>
                                 <div className="text-right">
                                     <p className="text-sm font-medium text-neutral-700">Days Remaining</p>
                                     <p className="text-lg font-semibold text-primary-600">
-                                        {subscriptionStatus.daysRemaining ?? 'Loading...'} {subscriptionStatus.daysRemaining ? 'days' : ''}
+                                        {subscriptionStatus.daysRemaining} days
                                     </p>
                                 </div>
                             </div>
