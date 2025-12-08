@@ -5,8 +5,6 @@ import { useEffect, useRef } from 'react'
 interface Dot {
     x: number
     y: number
-    baseX: number
-    baseY: number
 }
 
 export default function CursorEffect() {
@@ -26,26 +24,19 @@ export default function CursorEffect() {
         const resizeCanvas = () => {
             canvas.width = window.innerWidth
             canvas.height = window.innerHeight
-
-            // Regenerate dots on resize
             generateDots()
         }
 
-        // Generate grid of dots
+        // Generate evenly distributed dots
         const generateDots = () => {
             dotsRef.current = []
-            const spacing = 40 // Distance between dots
-            const cols = Math.ceil(canvas.width / spacing)
-            const rows = Math.ceil(canvas.height / spacing)
+            const spacing = 30 // Closer spacing for more dots
+            const offsetX = (canvas.width % spacing) / 2 // Center the grid
+            const offsetY = (canvas.height % spacing) / 2
 
-            for (let i = 0; i < cols; i++) {
-                for (let j = 0; j < rows; j++) {
-                    dotsRef.current.push({
-                        x: i * spacing,
-                        y: j * spacing,
-                        baseX: i * spacing,
-                        baseY: j * spacing
-                    })
+            for (let x = offsetX; x < canvas.width; x += spacing) {
+                for (let y = offsetY; y < canvas.height; y += spacing) {
+                    dotsRef.current.push({ x, y })
                 }
             }
         }
@@ -66,83 +57,33 @@ export default function CursorEffect() {
             ctx.clearRect(0, 0, canvas.width, canvas.height)
 
             const mouse = mouseRef.current
-            const interactionRadius = 150 // Distance at which dots react to mouse
+            const maxDistance = 120 // Distance at which dots start to glow
 
-            // Draw dots
+            // Draw all dots
             dotsRef.current.forEach(dot => {
-                // Calculate distance to mouse
-                const dx = mouse.x - dot.baseX
-                const dy = mouse.y - dot.baseY
+                const dx = mouse.x - dot.x
+                const dy = mouse.y - dot.y
                 const distance = Math.sqrt(dx * dx + dy * dy)
 
-                // Calculate opacity based on distance
-                let opacity = 0.15
-                let size = 2
+                // Calculate opacity based on distance to mouse
+                let opacity = 0.08 // Very subtle base opacity
+                let size = 1.5 // Small dot size
 
-                if (distance < interactionRadius) {
-                    // Closer to mouse = more visible
-                    const proximity = 1 - (distance / interactionRadius)
-                    opacity = 0.15 + (proximity * 0.6)
-                    size = 2 + (proximity * 2)
+                if (distance < maxDistance) {
+                    // Smooth falloff using quadratic easing
+                    const proximity = 1 - (distance / maxDistance)
+                    const easedProximity = proximity * proximity
 
-                    // Move dot slightly toward mouse
-                    const force = proximity * 0.1
-                    dot.x = dot.baseX + (dx * force)
-                    dot.y = dot.baseY + (dy * force)
-                } else {
-                    // Return to base position
-                    dot.x += (dot.baseX - dot.x) * 0.1
-                    dot.y += (dot.baseY - dot.y) * 0.1
+                    opacity = 0.08 + (easedProximity * 0.4) // Max opacity 0.48
+                    size = 1.5 + (easedProximity * 1) // Max size 2.5
                 }
 
-                // Draw dot
-                ctx.fillStyle = `rgba(59, 130, 246, ${opacity})` // Blue color
+                // Draw dot with subtle blue color
+                ctx.fillStyle = `rgba(96, 165, 250, ${opacity})` // Lighter blue
                 ctx.beginPath()
                 ctx.arc(dot.x, dot.y, size, 0, Math.PI * 2)
                 ctx.fill()
             })
-
-            // Draw connections between nearby dots
-            ctx.strokeStyle = 'rgba(59, 130, 246, 0.1)'
-            ctx.lineWidth = 1
-
-            for (let i = 0; i < dotsRef.current.length; i++) {
-                const dot1 = dotsRef.current[i]
-
-                // Only check nearby dots for performance
-                for (let j = i + 1; j < dotsRef.current.length; j++) {
-                    const dot2 = dotsRef.current[j]
-                    const dx = dot1.x - dot2.x
-                    const dy = dot1.y - dot2.y
-                    const distance = Math.sqrt(dx * dx + dy * dy)
-
-                    // Only draw connection if dots are close
-                    if (distance < 80) {
-                        // Check if either dot is near mouse
-                        const dist1ToMouse = Math.sqrt(
-                            Math.pow(mouse.x - dot1.baseX, 2) +
-                            Math.pow(mouse.y - dot1.baseY, 2)
-                        )
-                        const dist2ToMouse = Math.sqrt(
-                            Math.pow(mouse.x - dot2.baseX, 2) +
-                            Math.pow(mouse.y - dot2.baseY, 2)
-                        )
-
-                        const minDistToMouse = Math.min(dist1ToMouse, dist2ToMouse)
-
-                        if (minDistToMouse < interactionRadius) {
-                            const proximity = 1 - (minDistToMouse / interactionRadius)
-                            const opacity = proximity * 0.3
-
-                            ctx.strokeStyle = `rgba(59, 130, 246, ${opacity})`
-                            ctx.beginPath()
-                            ctx.moveTo(dot1.x, dot1.y)
-                            ctx.lineTo(dot2.x, dot2.y)
-                            ctx.stroke()
-                        }
-                    }
-                }
-            }
 
             animationFrameRef.current = requestAnimationFrame(animate)
         }
@@ -163,7 +104,6 @@ export default function CursorEffect() {
         <canvas
             ref={canvasRef}
             className="fixed top-0 left-0 w-full h-full pointer-events-none z-0"
-            style={{ opacity: 0.6 }}
         />
     )
 }
