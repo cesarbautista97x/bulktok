@@ -69,7 +69,7 @@ export async function POST(request: Request) {
 
                 return NextResponse.json({
                     success: true,
-                    warning: 'API key changed. A security notification has been sent to your email.'
+                    warning: 'API key updated successfully.'
                 })
             } catch (notificationError) {
                 console.error('Error sending notification:', notificationError)
