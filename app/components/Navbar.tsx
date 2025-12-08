@@ -24,7 +24,7 @@ export default function Navbar() {
                 <div className="flex justify-between items-center h-16">
                     {/* Logo */}
                     <Link href="/" className="flex items-center space-x-2">
-                        <img src="/favicon.ico" alt="BulkTok" className="w-8 h-8" />
+                        <img src="/logo.png" alt="BulkTok" className="w-8 h-8 rounded-full" />
                         <span className="text-xl font-bold gradient-text">BulkTok</span>
                     </Link>
 
