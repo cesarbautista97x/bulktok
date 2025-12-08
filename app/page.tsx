@@ -124,7 +124,7 @@ export default function HomePage() {
                     </div>
 
                     {/* Video Features */}
-                    <div className="mt-12 grid md:grid-cols-2 gap-6">
+                    <div className="mt-12 grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
                         <div className="flex items-start gap-4">
                             <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
                                 <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
