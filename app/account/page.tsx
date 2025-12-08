@@ -268,7 +268,12 @@ function AccountPageContent() {
             })
 
             if (response.ok) {
-                toast.success('API key saved successfully!')
+                const data = await response.json()
+                if (data.warning) {
+                    toast.warning(data.warning, { duration: 5000 })
+                } else {
+                    toast.success('API key saved successfully!')
+                }
             } else {
                 toast.error('Failed to save API key')
             }

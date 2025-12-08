@@ -68,7 +68,7 @@ export default function PricingPage() {
                         <div className="mb-6">
                             <h3 className="text-2xl font-bold text-neutral-900 mb-2">Pro Plan</h3>
                             <div className="flex items-baseline gap-2">
-                                <span className="text-5xl font-bold text-neutral-900">$9.97</span>
+                                <span className="text-5xl font-bold text-neutral-900">$19.97</span>
                                 <span className="text-neutral-600">/month</span>
                             </div>
                         </div>
@@ -84,7 +84,7 @@ export default function PricingPage() {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                     </svg>
                                     <span className="text-neutral-700">
-                                        <strong>100 videos per month</strong> - Generate up to 100 high-quality videos
+                                        <strong>200 videos per month</strong> - Generate up to 200 high-quality videos
                                     </span>
                                 </li>
                                 <li className="flex items-start gap-3">

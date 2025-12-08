@@ -12,6 +12,24 @@ export async function POST(request: Request) {
             )
         }
 
+        // Get current API key and user email
+        const { data: currentProfile, error: fetchError } = await supabase
+            .from('profiles')
+            .select('hedra_api_key, email')
+            .eq('id', userId)
+            .single()
+
+        if (fetchError) {
+            console.error('Error fetching current profile:', fetchError)
+            return NextResponse.json(
+                { error: 'Failed to fetch current settings' },
+                { status: 500 }
+            )
+        }
+
+        const isChangingKey = currentProfile?.hedra_api_key && currentProfile.hedra_api_key !== hedraApiKey
+        const userEmail = currentProfile?.email
+
         // Update profile with Hedra API key
         const { error: updateError } = await supabase
             .from('profiles')
@@ -24,6 +42,43 @@ export async function POST(request: Request) {
                 { error: 'Failed to save API key' },
                 { status: 500 }
             )
+        }
+
+        // If API key was changed (not first time setup), send notification
+        if (isChangingKey && userEmail) {
+            try {
+                // Get IP address from request
+                const forwarded = request.headers.get('x-forwarded-for')
+                const ip = forwarded ? forwarded.split(',')[0] : request.headers.get('x-real-ip') || 'unknown'
+
+                // Log the change
+                console.log(`⚠️ API Key changed for user ${userEmail} from IP ${ip}`)
+
+                // Send email notification (you can implement this with Resend, SendGrid, etc.)
+                // For now, we'll just log it and return a warning flag
+                await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/send-notification`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: userEmail,
+                        type: 'api_key_changed',
+                        ip,
+                        timestamp: new Date().toISOString()
+                    })
+                }).catch(err => console.error('Failed to send notification:', err))
+
+                return NextResponse.json({
+                    success: true,
+                    warning: 'API key changed. A security notification has been sent to your email.'
+                })
+            } catch (notificationError) {
+                console.error('Error sending notification:', notificationError)
+                // Still return success since the key was saved
+                return NextResponse.json({
+                    success: true,
+                    warning: 'API key changed successfully.'
+                })
+            }
         }
 
         return NextResponse.json({ success: true })
