@@ -68,7 +68,10 @@ function AccountPageContent() {
                 const response = await fetch('/api/stripe/subscription-status', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId: user.id }),
+                    body: JSON.stringify({
+                        userId: user.id,
+                        email: user.email
+                    }),
                 })
 
                 if (response.ok) {
@@ -363,17 +366,19 @@ function AccountPageContent() {
                                 <div>
                                     <p className="text-sm font-medium text-neutral-700">Next Billing Date</p>
                                     <p className="text-lg font-semibold text-neutral-900">
-                                        {new Date(subscriptionStatus.currentPeriodEnd).toLocaleDateString('en-US', {
-                                            month: 'long',
-                                            day: 'numeric',
-                                            year: 'numeric'
-                                        })}
+                                        {subscriptionStatus.currentPeriodEnd ?
+                                            new Date(subscriptionStatus.currentPeriodEnd).toLocaleDateString('en-US', {
+                                                month: 'long',
+                                                day: 'numeric',
+                                                year: 'numeric'
+                                            }) : 'Loading...'
+                                        }
                                     </p>
                                 </div>
                                 <div className="text-right">
                                     <p className="text-sm font-medium text-neutral-700">Days Remaining</p>
                                     <p className="text-lg font-semibold text-primary-600">
-                                        {subscriptionStatus.daysRemaining} days
+                                        {subscriptionStatus.daysRemaining ?? 'Loading...'} {subscriptionStatus.daysRemaining ? 'days' : ''}
                                     </p>
                                 </div>
                             </div>
