@@ -27,6 +27,9 @@ function AccountPageContent() {
     const [profileLoading, setProfileLoading] = useState(true)
     const [subscriptionStatus, setSubscriptionStatus] = useState<any>(null)
     const [isCanceling, setIsCanceling] = useState(false)
+    const [hedraApiKey, setHedraApiKey] = useState('')
+    const [isSavingApiKey, setIsSavingApiKey] = useState(false)
+
 
     // Load profile directly from database
     useEffect(() => {
@@ -76,14 +79,12 @@ function AccountPageContent() {
 
                 if (response.ok) {
                     const data = await response.json()
-                    console.log('Subscription status loaded:', data)
                     setSubscriptionStatus(data)
                 } else {
                     const error = await response.json()
-                    console.error('Failed to load subscription status:', error)
                 }
             } catch (error) {
-                console.error('Error loading subscription status:', error)
+                // Silent error handling
             }
         }
 
@@ -347,19 +348,11 @@ function AccountPageContent() {
                     <h2 className="text-xl font-semibold text-neutral-900 mb-4">
                         Subscription
                     </h2>
-                    <div className="flex items-center justify-between mb-4">
-                        <div>
-                            <p className="text-sm text-neutral-600">Current Plan</p>
-                            <p className="text-2xl font-bold text-neutral-900 capitalize mt-1">
-                                {displayProfile.subscription_tier}
-                            </p>
-                        </div>
-                        <div className="text-right">
-                            <p className="text-sm text-neutral-600">Monthly Price</p>
-                            <p className="text-2xl font-bold text-primary-600 mt-1">
-                                {getPrice(displayProfile.subscription_tier)}
-                            </p>
-                        </div>
+                    <div className="mb-4">
+                        <p className="text-sm text-neutral-600">Current Plan</p>
+                        <p className="text-2xl font-bold text-neutral-900 capitalize mt-1">
+                            {displayProfile.subscription_tier}
+                        </p>
                     </div>
 
                     {/* Subscription Status - Show for paid tiers */}
