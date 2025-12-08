@@ -22,7 +22,6 @@ export default function DateRangePicker({
     const ranges: { value: TimeRange; label: string }[] = [
         { value: 'all', label: 'All Time' },
         { value: 'last24h', label: 'Last 24 hours' },
-        { value: 'today', label: 'Today' },
         { value: 'custom', label: 'Custom Range' },
     ]
 
