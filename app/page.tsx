@@ -2,12 +2,16 @@
 
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import CursorEffect from '@/app/components/CursorEffect'
 
 export default function HomePage() {
     const router = useRouter()
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-primary-50">
+        <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-primary-50 relative">
+            {/* Cursor Effect */}
+            <CursorEffect />
+
             {/* Hero Section */}
             <div className="relative overflow-hidden">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
@@ -304,7 +308,7 @@ export default function HomePage() {
                         <div>
                             <h4 className="text-white font-semibold mb-4">Support</h4>
                             <ul className="space-y-2 text-sm">
-                                <li><a href="mailto:support@bulktok.com" className="hover:text-white transition-colors">Contact Us</a></li>
+                                <li><a href="mailto:cesarbautista97x@gmail.com" className="hover:text-white transition-colors">Contact Us</a></li>
                                 <li><a href="#" className="hover:text-white transition-colors">FAQ</a></li>
                             </ul>
                         </div>
