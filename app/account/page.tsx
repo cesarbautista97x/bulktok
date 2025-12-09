@@ -31,7 +31,7 @@ function AccountPageContent() {
     const [isSavingApiKey, setIsSavingApiKey] = useState(false)
 
 
-    // Load profile directly from database
+    // Load profile directly from database via API (no cache)
     useEffect(() => {
         const loadProfile = async () => {
             if (!user) {
@@ -40,17 +40,19 @@ function AccountPageContent() {
             }
 
             try {
-                const { data, error } = await supabase
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', user.id)
-                    .single()
+                // Use API endpoint to get fresh data from server
+                const response = await fetch('/api/profile/refresh', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: user.id })
+                })
 
-                if (error) {
-                    console.error('Error loading profile:', error)
-                } else {
-                    console.log('Profile loaded:', data)
+                if (response.ok) {
+                    const { profile: data } = await response.json()
+                    console.log('Profile loaded from server:', data)
                     setLocalProfile(data)
+                } else {
+                    console.error('Error loading profile from API')
                 }
             } catch (error) {
                 console.error('Error in loadProfile:', error)
