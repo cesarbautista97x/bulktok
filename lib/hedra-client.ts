@@ -28,7 +28,7 @@ export class HedraClient {
      */
     async uploadImage(imageBuffer: Buffer, filename: string): Promise<string> {
         const formData = new FormData()
-        const blob = new Blob([imageBuffer], { type: 'image/png' })
+        const blob = new Blob([new Uint8Array(imageBuffer)], { type: 'image/png' })
         formData.append('file', blob, filename)
 
         const response = await fetch(`${this.baseUrl}/v1/portrait`, {
@@ -53,7 +53,7 @@ export class HedraClient {
      */
     async uploadAudio(audioBuffer: Buffer, filename: string): Promise<string> {
         const formData = new FormData()
-        const blob = new Blob([audioBuffer], { type: 'audio/mpeg' })
+        const blob = new Blob([new Uint8Array(audioBuffer)], { type: 'audio/mpeg' })
         formData.append('file', blob, filename)
 
         const response = await fetch(`${this.baseUrl}/v1/audio`, {
