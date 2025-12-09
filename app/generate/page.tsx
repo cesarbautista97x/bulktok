@@ -223,7 +223,7 @@ export default function GeneratePage() {
                                     ⚠️ You're running low on videos. Upgrade for more!
                                 </p>
                                 <button
-                                    onClick={() => router.push('/account')}
+                                    onClick={() => router.push('/pricing')}
                                     className="text-sm font-medium text-primary-600 hover:text-primary-700 underline"
                                 >
                                     View Plans →
