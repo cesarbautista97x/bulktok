@@ -127,6 +127,7 @@ export async function POST(request: NextRequest) {
             images: imageBuffers,
             audio: audioBuffer,
             aspectRatio,
+            resolution,
             prompt
         })
 
