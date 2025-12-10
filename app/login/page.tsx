@@ -141,19 +141,6 @@ export default function LoginPage() {
                         </button>
                     )}
                 </div>
-
-                <div className="mt-8 pt-6 border-t border-neutral-200">
-                    <div className="grid grid-cols-2 gap-4 text-center text-sm">
-                        <div>
-                            <div className="font-semibold text-neutral-900">Free</div>
-                            <div className="text-neutral-600">5 videos/month</div>
-                        </div>
-                        <div>
-                            <div className="font-semibold text-neutral-900">$29/mo</div>
-                            <div className="text-neutral-600">300 videos/month</div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     )
