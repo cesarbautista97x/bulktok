@@ -62,21 +62,34 @@ export async function POST(request: Request) {
                 const subscription = event.data.object as Stripe.Subscription
                 const customerId = subscription.customer as string
                 const status = subscription.status
+                const priceId = subscription.items.data[0]?.price.id
 
-                console.log('Subscription updated:', { customerId, status })
+                console.log('Subscription updated:', { customerId, status, priceId })
 
-                // Update subscription status
-                if (status === 'active') {
-                    await supabase
-                        .from('profiles')
-                        .update({ subscription_tier: 'paid' })
-                        .eq('stripe_customer_id', customerId)
-                } else if (status === 'canceled' || status === 'unpaid') {
-                    await supabase
-                        .from('profiles')
-                        .update({ subscription_tier: 'free' })
-                        .eq('stripe_customer_id', customerId)
+                // Determine tier from price ID
+                let tier = 'free'
+                if (status === 'active' && priceId) {
+                    if (priceId === process.env.STRIPE_PRICE_ID_PRO) {
+                        tier = 'pro'
+                    } else if (priceId === process.env.STRIPE_PRICE_ID_UNLIMITED) {
+                        tier = 'unlimited'
+                    } else {
+                        // Unknown price, default to pro
+                        tier = 'pro'
+                    }
                 }
+
+                console.log('Updating tier to:', tier)
+
+                // Update subscription tier
+                await supabaseAdmin
+                    .from('profiles')
+                    .update({
+                        subscription_tier: tier,
+                        stripe_subscription_id: subscription.id
+                    })
+                    .eq('stripe_customer_id', customerId)
+
                 break
             }
 
