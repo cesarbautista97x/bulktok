@@ -169,16 +169,22 @@ export default function GeneratePage() {
                     <p className="text-neutral-600">
                         Upload your images and audio. Generate videos automatically.
                     </p>
-                    {/* Debug info - remove later */}
-                    {!profile && user && (
-                        <p className="text-xs text-red-600 mt-2">
-                            Debug: User logged in but profile not loaded. User ID: {user.id}
-                        </p>
-                    )}
+
+                    {/* Login Required Alert */}
                     {!user && (
-                        <p className="text-xs text-red-600 mt-2">
-                            Debug: No user logged in
-                        </p>
+                        <div className="mt-4 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg">
+                            <div className="flex items-start">
+                                <svg className="w-6 h-6 text-yellow-600 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                                <div className="flex-1">
+                                    <h3 className="text-sm font-medium text-yellow-800">Login Required</h3>
+                                    <p className="mt-1 text-sm text-yellow-700">
+                                        Please <a href="/login" className="font-semibold underline hover:text-yellow-900">log in</a> to generate videos and track your usage.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     )}
                 </div>
 

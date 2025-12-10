@@ -111,34 +111,7 @@ export default function LoginPage() {
                     </button>
                 </form>
 
-                {/* Quick Login for Testing */}
-                {!isForgotPassword && (
-                    <button
-                        onClick={async () => {
-                            setLoading(true)
-                            try {
-                                const { error } = await signInWithEmail('laurapd1@gmail.com', 'BulkTok2025!')
-                                if (error) {
-                                    toast.error(error.message)
-                                } else {
-                                    toast.success('Quick login successful!')
-                                    router.push('/account')
-                                }
-                            } catch (error: any) {
-                                toast.error(error.message)
-                            } finally {
-                                setLoading(false)
-                            }
-                        }}
-                        disabled={loading}
-                        className="mt-4 w-full flex items-center justify-center gap-2 px-4 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors disabled:opacity-50"
-                    >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                        Quick Login (Dev)
-                    </button>
-                )}
+
 
                 <div className="mt-6 space-y-2 text-center">
                     {!isForgotPassword && (
