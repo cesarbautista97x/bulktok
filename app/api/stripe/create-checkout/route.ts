@@ -50,6 +50,16 @@ export async function POST(request: Request) {
             ? process.env.STRIPE_PRICE_ID_PRO
             : process.env.STRIPE_PRICE_ID_UNLIMITED
 
+        // Debug logging
+        console.log('=== STRIPE CHECKOUT DEBUG ===')
+        console.log('Tier requested:', tier)
+        console.log('STRIPE_PRICE_ID_PRO:', process.env.STRIPE_PRICE_ID_PRO)
+        console.log('STRIPE_PRICE_ID_UNLIMITED:', process.env.STRIPE_PRICE_ID_UNLIMITED)
+        console.log('Selected priceId:', priceId)
+        console.log('STRIPE_SECRET_KEY (first 10 chars):', process.env.STRIPE_SECRET_KEY?.substring(0, 10))
+        console.log('Is LIVE key?:', process.env.STRIPE_SECRET_KEY?.startsWith('sk_live'))
+        console.log('============================')
+
         if (!priceId) {
             console.error('Price ID not configured for tier:', tier)
             return NextResponse.json({ error: 'Price ID not configured' }, { status: 500 })
