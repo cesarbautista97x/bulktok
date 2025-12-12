@@ -77,7 +77,7 @@ export default function TermsPage() {
                         <section className="mb-8">
                             <h2 className="text-2xl font-semibold text-neutral-900 mb-4">9. Contact</h2>
                             <p className="text-neutral-700">
-                                For questions about these Terms, please contact us at: <a href="mailto:nc.nowccom@gmail.com" className="text-primary-600 hover:underline">nc.nowccom@gmail.com</a>
+                                For questions about these Terms, please contact us at: <a href="mailto:nc.nowcom@gmail.com" className="text-primary-600 hover:underline">nc.nowcom@gmail.com</a>
                             </p>
                         </section>
                     </div>

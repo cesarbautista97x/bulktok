@@ -81,7 +81,7 @@ export default function Error({
                 <p className="text-sm text-neutral-500 mt-6">
                     If this persists,{' '}
                     <a
-                        href="mailto:nc.nowccom@gmail.com"
+                        href="mailto:nc.nowcom@gmail.com"
                         className="text-primary-600 hover:text-primary-700 underline"
                     >
                         contact support
