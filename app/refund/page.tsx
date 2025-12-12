@@ -43,7 +43,7 @@ export default function RefundPage() {
                         <section className="mb-8">
                             <h2 className="text-2xl font-semibold text-neutral-900 mb-4">4. How to Request a Refund</h2>
                             <p className="text-neutral-700 mb-4">
-                                To request a refund, please contact us at <a href="mailto:cesarbautista97x@gmail.com" className="text-primary-600 hover:underline">cesarbautista97x@gmail.com</a> with:
+                                To request a refund, please contact us at <a href="mailto:nc.nowccom@gmail.com" className="text-primary-600 hover:underline">nc.nowccom@gmail.com</a> with:
                             </p>
                             <ul className="list-disc list-inside text-neutral-700 space-y-2 mb-4">
                                 <li>Your account email</li>
@@ -80,7 +80,7 @@ export default function RefundPage() {
                         <section className="mb-8">
                             <h2 className="text-2xl font-semibold text-neutral-900 mb-4">8. Contact</h2>
                             <p className="text-neutral-700">
-                                For refund requests or questions, contact: <a href="mailto:cesarbautista97x@gmail.com" className="text-primary-600 hover:underline">cesarbautista97x@gmail.com</a>
+                                For refund requests or questions, contact: <a href="mailto:nc.nowccom@gmail.com" className="text-primary-600 hover:underline">nc.nowccom@gmail.com</a>
                             </p>
                         </section>
                     </div>

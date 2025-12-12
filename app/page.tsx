@@ -314,7 +314,7 @@ export default function HomePage() {
                         <div>
                             <h4 className="text-white font-semibold mb-4">Support</h4>
                             <ul className="space-y-2 text-sm">
-                                <li><a href="mailto:cesarbautista97x@gmail.com" className="hover:text-white transition-colors">Contact Us</a></li>
+                                <li><a href="mailto:nc.nowccom@gmail.com" className="hover:text-white transition-colors">Contact Us</a></li>
                                 <li><a href="#" className="hover:text-white transition-colors">FAQ</a></li>
                             </ul>
                         </div>

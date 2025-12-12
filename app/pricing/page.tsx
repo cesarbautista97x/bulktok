@@ -246,7 +246,7 @@ export default function PricingPage() {
                                 What happens if I exceed my Pro plan limit?
                             </h3>
                             <p className="text-neutral-600">
-                                If you reach 100 videos on the Pro plan, you can upgrade to Unlimited at any time or wait until next month when your limit resets.
+                                If you reach 300 videos on the Pro plan, you can upgrade to Unlimited at any time or wait until next month when your limit resets.
                             </p>
                         </div>
 
