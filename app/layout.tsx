@@ -1,6 +1,7 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/next'
 import { Toaster } from 'sonner'
 import Navbar from './components/Navbar'
 import { AuthProvider } from './providers/AuthProvider'
@@ -30,6 +31,7 @@ export default function RootLayout({
                     </main>
                     <Toaster position="top-right" richColors />
                 </AuthProvider>
+                <Analytics />
             </body>
         </html>
     )
